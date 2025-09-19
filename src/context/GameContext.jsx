@@ -16,11 +16,14 @@ const initialState = {
   // Compatibilidade com app mobile
   mobileCompatibility: true,
   qrCodeFormat: 'GameQrcodeFach', // Formato compatível com mobile
-  scannedQRCodes: [] // Histórico de QR codes escaneados
+  scannedQRCodes: [], // Histórico de QR codes escaneados
+  results: [] // Resultados do jogo, para limpar no reset
 };
-
+console.log("Initial State:", initialState);
 function gameReducer(state, action) {
   switch (action.type) {
+    case 'SET_RESULTS':
+      return { ...state, results: Array.isArray(action.payload) ? action.payload : [] };
     case 'SET_GAME_STATUS':
       return { ...state, gameStatus: action.payload };
     case 'SET_TIME_REMAINING':
@@ -59,7 +62,7 @@ function gameReducer(state, action) {
           ...state.teams,
           [teamName]: {
             ...state.teams[teamName],
-            score: state.teams[teamName].score + points
+            score: (state.teams[teamName]?.score || 0) + points
           }
         },
         scannedQRCodes: qrCode ? [...state.scannedQRCodes, qrCode] : state.scannedQRCodes
@@ -85,12 +88,29 @@ export function GameProvider({ children }) {
             const data = docSnap.data();
             dispatch({ type: 'SET_GAME_STATUS', payload: data.status });
             dispatch({ type: 'SET_TIME_REMAINING', payload: data.timeRemaining });
-            dispatch({ type: 'SET_TEAMS', payload: data.teams });
+            dispatch({
+              type: 'SET_TEAMS',
+              payload: {
+                blue: {
+                  players: Array.isArray(data.teams?.blue?.players) ? data.teams.blue.players : [],
+                  score: typeof data.teams?.blue?.score === 'number' ? data.teams.blue.score : 0
+                },
+                red: {
+                  players: Array.isArray(data.teams?.red?.players) ? data.teams.red.players : [],
+                  score: typeof data.teams?.red?.score === 'number' ? data.teams.red.score : 0
+                }
+              }
+            });
             if (data.scannedQRCodes) {
               dispatch({ type: 'RESET_SCANNED_QR' });
               data.scannedQRCodes.forEach(qr => {
                 dispatch({ type: 'ADD_SCORE', payload: { teamName: null, points: 0, qrCode: qr } });
               });
+            }
+            // Sincroniza campo results do Firestore para o contexto de forma reativa
+            if (Array.isArray(data.results)) {
+              dispatch({ type: 'SET_RESULTS', payload: data.results });
+              console.log("Resultados sincronizados:", data.results);
             }
             setIsLoaded(true);
           }

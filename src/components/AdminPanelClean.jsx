@@ -30,8 +30,21 @@ export default function AdminPanelClean() {
     stopGame, 
     resetGame,
     scannedQRCodes,
+    results,
     dispatch 
   } = useGame();
+
+  // Função para resetar o campo results no Firestore
+  const resetResultsInFirestore = async () => {
+    try {
+      const { db } = await import('../config/firebase');
+      const { doc, updateDoc } = await import('firebase/firestore');
+      const gameDocRef = doc(db, 'game', 'current');
+      await updateDoc(gameDocRef, { results: [] });
+    } catch (err) {
+      console.error('Erro ao resetar campo results:', err);
+    }
+  };
   
   const [timer, setTimer] = useState(null);
   const timeRef = useRef(timeRemaining);
@@ -93,7 +106,17 @@ export default function AdminPanelClean() {
 
   const handleResetGame = async () => {
     if (window.confirm('Tem certeza que deseja resetar o jogo? Todos os dados serão perdidos!')) {
-      await resetGame();
+      // await resetGame();
+      // Mantém os jogadores, zera apenas a pontuação
+      const updatedTeams = {
+        blue: { ...teams.blue, score: 0 },
+        red: { ...teams.red, score: 0 }
+      };
+      dispatch({ type: 'SET_TEAMS', payload: updatedTeams });
+      dispatch({ type: 'SET_GAME_STATUS', payload: 'waiting' });
+      dispatch({ type: 'SET_TIME_REMAINING', payload: 600 });
+      dispatch({ type: 'RESET_SCANNED_QR' });
+      await resetResultsInFirestore();
     }
   };
 
@@ -184,9 +207,9 @@ export default function AdminPanelClean() {
 
   const sections = [
     { id: 'dashboard', name: 'Dashboard', icon: Monitor },
-    { id: 'players', name: 'Jogadores', icon: Users },
+    //{ id: 'players', name: 'Jogadores', icon: Users },
     { id: 'qrcodes', name: 'QR Codes', icon: QrCode },
-    { id: 'sync', name: 'Sincronização', icon: Smartphone },
+    //{ id: 'sync', name: 'Sincronização', icon: Smartphone },
     { id: 'stats', name: 'Estatísticas', icon: BarChart3 }
   ];
 
@@ -201,7 +224,7 @@ export default function AdminPanelClean() {
             </div>
             <div className="header-text">
               <h1>Painel Administrativo</h1>
-              <p>GameQrcodeFach - Controle do Jogo</p>
+              <p>QrcodeMaster - Controle do Jogo</p>
             </div>
           </div>
           
@@ -268,6 +291,7 @@ export default function AdminPanelClean() {
                 <span>Resetar</span>
               </button>
 
+              {/*
               <button
                 onClick={exportGameData}
                 className="control-btn export-btn"
@@ -275,6 +299,7 @@ export default function AdminPanelClean() {
                 <Download size={16} />
                 <span>Exportar</span>
               </button>
+               */}
             </div>
           </div>
         </aside>
@@ -353,10 +378,10 @@ export default function AdminPanelClean() {
                           <p className="no-players">Nenhum jogador registrado</p>
                         ) : (
                           teamData.players.map((player, index) => (
-                            <div key={index} style={{ display: 'flex', alignItems: 'center' }}>
+                            <div key={index} className="player-row">
                               <div className="player-item">
                                 <div className={`player-dot team-${teamName}`}></div>
-                                <span>{player}</span>
+                                <span className="player-name">{player}</span>
                               </div>
                               <button
                                 onClick={() => removePlayer(player, teamName)}
@@ -391,7 +416,9 @@ export default function AdminPanelClean() {
 
               {/* Winner Display */}
               {gameStatus === 'finished' && (
-                <div className="winner-display">
+                <div 
+                  className={`winner-display winner-${getWinningTeam()}`}
+                >
                   <Trophy size={48} />
                   <h2>
                     {getWinningTeam() === 'tie' 
@@ -449,7 +476,7 @@ export default function AdminPanelClean() {
                           <div key={index} className="player-card">
                             <div className="player-info">
                               <div className={`player-dot team-${teamName}`}></div>
-                              <span>{player}</span>
+                              <span className="player-name">{player}</span>
                             </div>
                             <button
                               onClick={() => removePlayer(player, teamName)}
@@ -491,23 +518,21 @@ export default function AdminPanelClean() {
               <div className="qr-stats">
                 <div className="qr-stat verde">
                   <div className="qr-count">
-                    {scannedQRCodes?.filter(qr => qr.includes('verde')).length || 0}
+                    {results?.filter(qr => qr.color === 'verde').length || 0}
                   </div>
                   <div className="qr-label">QRs Verdes</div>
                   <div className="qr-points">1 ponto cada</div>
                 </div>
-                
                 <div className="qr-stat laranja">
                   <div className="qr-count">
-                    {scannedQRCodes?.filter(qr => qr.includes('laranja')).length || 0}
+                    {results?.filter(qr => qr.color === 'laranja').length || 0}
                   </div>
                   <div className="qr-label">QRs Laranjas</div>
                   <div className="qr-points">3 pontos cada</div>
                 </div>
-                
                 <div className="qr-stat vermelho">
                   <div className="qr-count">
-                    {scannedQRCodes?.filter(qr => qr.includes('vermelho')).length || 0}
+                    {results?.filter(qr => qr.color === 'vermelho').length || 0}
                   </div>
                   <div className="qr-label">QRs Vermelhos</div>
                   <div className="qr-points">5 pontos cada</div>

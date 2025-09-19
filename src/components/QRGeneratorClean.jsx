@@ -1,10 +1,18 @@
 import React, { useState } from 'react';
+import { useEffect } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { Printer, Eye, Smartphone } from 'lucide-react';
+import { v4 as uuidv4 } from 'uuid';
 import './QRGeneratorClean.css';
 
 export default function QRGeneratorClean() {
   const [selectedType, setSelectedType] = useState('verde');
+  const [qrUnico, setQrUnico] = useState(gerarQrCode('verde'));
+
+  function gerarQrCode(cor) {
+    const idUnico = uuidv4();
+    return `GameQrcodeFach:${cor}:${idUnico}`;
+  }
   
   const qrTypes = {
     verde: { 
@@ -28,8 +36,17 @@ export default function QRGeneratorClean() {
   };
 
   const generateQRData = () => {
+    // Função antiga mantida para compatibilidade, mas não usada
     return `GameQrcodeFach:${selectedType}`;
   };
+
+  // Gere novo QR ao trocar cor
+  useEffect(() => {
+    setQrUnico(gerarQrCode(selectedType));
+  }, [selectedType]);
+
+  // Função para gerar novo QR manualmente
+  const novoQrUnico = () => setQrUnico(gerarQrCode(selectedType));
 
   const printQR = () => {
   const printWindow = window.open('', '_blank');
@@ -153,7 +170,7 @@ export default function QRGeneratorClean() {
 
       <div className="qr-content">
         {/* Controls Panel */}
-        <div className="qr-controls">
+        <div style={{minWidth: '500px'}} className="qr-controls">
           <h3>Configurações</h3>
           
           <div className="qr-type-selection">
@@ -183,21 +200,11 @@ export default function QRGeneratorClean() {
             </div>
           </div>
 
-          <div className="mobile-info">
-            <div className="info-header">
-              <Smartphone size={20} />
-              <span>Formato Mobile Otimizado</span>
-            </div>
-            <p>
-              QR codes únicos por cor, compatíveis com o app React Native.
-              Cada cor pode ser escaneada apenas uma vez por jogador.
-            </p>
-          </div>
-
           {/* Generated Code Preview */}
           <div className="code-preview">
             <div className="preview-label">Código gerado:</div>
-            <div className="preview-code">{generateQRData()}</div>
+            <div className="preview-code">{qrUnico}</div>
+            <button onClick={novoQrUnico} style={{marginTop:8, padding:'6px 16px', borderRadius:8, background:'#16a34a', color:'#fff', border:'none', fontWeight:'bold', cursor:'pointer'}}>Novo QR único</button>
           </div>
         </div>
 
@@ -212,7 +219,7 @@ export default function QRGeneratorClean() {
             {/* QR Code Display */}
             <div className={`qr-container ${qrTypes[selectedType].className}`}>
               <QRCodeSVG
-                value={generateQRData()}
+                value={qrUnico}
                 size={200}
                 fgColor={qrTypes[selectedType].color}
                 bgColor="#ffffff"
@@ -235,40 +242,6 @@ export default function QRGeneratorClean() {
               <Printer size={20} />
               <span>Imprimir QR Code</span>
             </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Instructions */}
-      <div className="qr-instructions">
-        <h3>Dicas para Uso</h3>
-        <div className="instructions-grid">
-          <div className="instruction-item">
-            <h4>📱 Impressão</h4>
-            <ul>
-              <li>Use papel branco de boa qualidade</li>
-              <li>Tamanho mínimo: 5x5 cm</li>
-              <li>Plastifique para proteção externa</li>
-              <li>Teste escaneamento antes de distribuir</li>
-            </ul>
-          </div>
-          <div className="instruction-item">
-            <h4>🎯 Distribuição</h4>
-            <ul>
-              <li>Verde (1pt): Locais fáceis de encontrar</li>
-              <li>Laranja (3pts): Dificuldade média</li>
-              <li>Vermelho (5pts): Locais mais difíceis</li>
-              <li>Espalhe estrategicamente pela feira</li>
-            </ul>
-          </div>
-          <div className="instruction-item">
-            <h4>📱 App Mobile</h4>
-            <ul>
-              <li>Formato otimizado para React Native</li>
-              <li>Cada cor escaneada apenas uma vez</li>
-              <li>Validação automática de duplicatas</li>
-              <li>Sincronização em tempo real</li>
-            </ul>
           </div>
         </div>
       </div>

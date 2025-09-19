@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { Printer, Eye, Hash, Palette, Smartphone, Globe } from 'lucide-react';
 import { generateValidQRCodes } from '../utils/qrCodeUtils';
+import { v4 as uuidv4 } from 'uuid';
 
 export default function QRGenerator() {
   const [selectedType, setSelectedType] = useState('verde');
+  const [qrId, setQrId] = useState('001');
+  const [qrUnico, setQrUnico] = useState(gerarQrCode(selectedType));
   
   const qrTypes = {
     // Formato Mobile (Recomendado)
@@ -37,13 +40,18 @@ export default function QRGenerator() {
     }
   };
 
+  const gerarQrCode = (cor) => {
+    const idUnico = uuidv4();
+    return `GameQrcodeFach:${cor}:${idUnico}`;
+  }
+
   const generateQRData = () => {
     return `GameQrcodeFach:${selectedType}`;
   };
 
   const printQR = () => {
     const printWindow = window.open('', '_blank');
-    const qrData = generateQRData();
+    const qrData = qrUnico;
     const qrType = qrTypes[selectedType];
     
     printWindow.document.write(`
@@ -162,6 +170,14 @@ export default function QRGenerator() {
     printWindow.document.close();
   };
 
+  // Gere novo QR ao trocar cor
+  useEffect(() => {
+    setQrUnico(gerarQrCode(selectedType));
+  }, [selectedType]);
+
+  // Função para gerar novo QR manualmente
+  const novoQrUnico = () => setQrUnico(gerarQrCode(selectedType));
+
   return (
     <div className="w-full max-w-4xl mx-auto">
       {/* Header */}
@@ -252,7 +268,7 @@ export default function QRGenerator() {
             <div className="p-4 bg-gray-50 rounded-xl border">
               <div className="text-sm font-medium text-gray-700 mb-2">Código gerado:</div>
               <div className="font-mono text-lg font-bold text-blue-600 bg-white px-3 py-2 rounded-lg border">
-                {generateQRData()}
+                {qrUnico}
               </div>
             </div>
           </div>
@@ -269,7 +285,7 @@ export default function QRGenerator() {
             {/* QR Code Display */}
             <div className={`inline-block p-6 rounded-2xl border-4 ${qrTypes[selectedType].borderColor} ${qrTypes[selectedType].bgColor} mb-6`}>
               <QRCodeSVG
-                value={generateQRData()}
+                value={qrUnico}
                 size={200}
                 fgColor={qrTypes[selectedType].color}
                 bgColor="#ffffff"

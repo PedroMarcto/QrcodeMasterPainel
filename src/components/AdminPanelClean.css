@@ -400,10 +400,14 @@
 .player-item {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 12px;
-  background: #f8fafc;
-  border-radius: 8px;
+  gap: 8px; /* Espaço entre bolinha e nome */
+}
+
+.player-row {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Espaço entre bolinha/nome e botão */
+  margin-bottom: 6px;
 }
 
 .player-info {
@@ -413,9 +417,10 @@
 }
 
 .player-dot {
-  width: 8px;
-  height: 8px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
+  margin-right: 6px;
 }
 
 .player-dot.team-blue {
@@ -424,6 +429,10 @@
 
 .player-dot.team-red {
   background: #ef4444;
+}
+
+.player-name {
+  margin-left: 2px;
 }
 
 .remove-btn {
@@ -483,22 +492,27 @@
 
 /* Winner Display */
 .winner-display {
-  background: linear-gradient(135deg, #fbbf24, #f59e0b);
-  border-radius: 12px;
-  padding: 32px;
-  text-align: center;
-  color: white;
-}
-
-.winner-display h2 {
-  margin: 16px 0 8px 0;
-  font-size: 28px;
+  color: #fff;
+  margin-top: 24px;
+  padding: 24px;
+  border-radius: 16px;
   font-weight: bold;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 1.3rem;
 }
 
-.winner-display p {
-  margin: 0;
-  font-size: 18px;
+.winner-blue {
+  background: #2563eb; /* Azul */
+}
+
+.winner-red {
+  background: #dc2626; /* Vermelho */
+}
+
+.winner-tie {
+  background: #f59e42; /* Empate (laranja ou neutro) */
 }
 
 /* Players Section */
