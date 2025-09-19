@@ -7,7 +7,7 @@ import './App.css';
 function App() {
   return (
     <GameProvider>
-      <Router basename="/GameQrodeFach/">
+      <Router basename="/QrcodeMasterPainel/">
         <div className="App">
           <Routes>
             <Route path="/" element={<AdminPanelClean />} />
