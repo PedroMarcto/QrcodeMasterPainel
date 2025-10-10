@@ -29,6 +29,12 @@
   gap: 12px;
 }
 
+.header-logo {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+}
+
 .header-icon {
   width: 40px;
   height: 40px;
@@ -107,6 +113,7 @@
 
 /* Main Content */
 .admin-content {
+  min-height: 51rem;
   max-width: 1200px;
   margin: 0 auto;
   padding: 24px;
@@ -884,5 +891,70 @@
   
   .teams-list {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Footer */
+.admin-footer {
+  background: #ffffff;
+  border-top: 1px solid #e2e8f0;
+  margin-top: auto;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.footer-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.footer-version {
+  font-size: 14px;
+  font-weight: 600;
+  color: #10b981;
+}
+
+.footer-divider {
+  color: #cbd5e1;
+  font-weight: bold;
+}
+
+.footer-event {
+  font-size: 14px;
+  color: #64748b;
+}
+
+.footer-right {
+  display: flex;
+  align-items: center;
+}
+
+.footer-copyright {
+  font-size: 13px;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+@media (max-width: 640px) {
+  .footer-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .footer-left,
+  .footer-right {
+    width: 100%;
   }
 }

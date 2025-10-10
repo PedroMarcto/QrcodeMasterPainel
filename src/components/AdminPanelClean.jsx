@@ -20,6 +20,7 @@ import {
 import QRGeneratorClean from './QRGeneratorClean';
 import SystemSyncClean from './SystemSyncClean';
 import './AdminPanelClean.css';
+import logo from '../assets/logo.png';
 
 export default function AdminPanelClean() {
   const { 
@@ -219,12 +220,10 @@ export default function AdminPanelClean() {
       <header className="admin-header">
         <div className="header-content">
           <div className="header-left">
-            <div className="header-icon">
-              <Settings size={24} />
-            </div>
+            <img src={logo} alt="QrcodeMaster Logo" className="header-logo" />
             <div className="header-text">
               <h1>Painel Administrativo</h1>
-              <p>QrcodeMaster - Controle do Jogo</p>
+              <p>QrcodeMaster - Administração da Plataforma</p>
             </div>
           </div>
           
@@ -603,6 +602,22 @@ export default function AdminPanelClean() {
           )}
         </main>
       </div>
+
+      {/* Footer */}
+      <footer className="admin-footer">
+        <div className="footer-content">
+          <div className="footer-left">
+            <span className="footer-version">QrcodeMaster Beta</span>
+            <span className="footer-divider">•</span>
+            <span className="footer-event">Desenvolvido para Fatech 2025</span>
+          </div>
+          <div className="footer-right">
+            <span className="footer-copyright">
+              Copyright © 2025 Pedro Otávio Rodrigues Marcato
+            </span>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
