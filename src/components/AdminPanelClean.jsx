@@ -585,7 +585,7 @@ export default function AdminPanelClean() {
                     <div className="summary-label">Jogadores</div>
                   </div>
                   <div className="summary-item">
-                    <div className="summary-value">{scannedQRCodes?.length || 0}</div>
+                    <div className="summary-value">{results ? results.length : 0}</div>
                     <div className="summary-label">QRs Escaneados</div>
                   </div>
                   <div className="summary-item">

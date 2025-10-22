@@ -77,13 +77,34 @@ export default function QRGeneratorClean() {
             }
             .print-container {
               background: white;
-              border-radius: 16px;
+              border-radius: 24px;
               padding: 40px;
               box-shadow: 0 4px 20px rgba(0,0,0,0.1);
               text-align: center;
               max-width: 400px;
               width: 100%;
-              border: 2px solid ${qrType.color};
+              border: 6px dashed #1e4fa3;
+              position: relative;
+              animation: borderPulse 2s infinite alternate;
+              background: #fff;
+            }
+            .print-container::after {
+              content: '';
+              position: absolute;
+              top: 8px; left: 8px;
+              width: 32px; height: 32px;
+              border-top: 6px solid #e63946;
+              border-left: 6px solid #1e4fa3;
+              border-radius: 12px 0 0 0;             
+            }
+            .print-container::before {
+              content: '';
+              position: absolute;
+              bottom: 8px; right: 8px;
+              width: 32px; height: 32px;
+              border-bottom: 6px solid #eab308;
+              border-right: 6px solid #1e4fa3;
+              border-radius: 0 0 12px 0;
             }
             .qr-container { 
               display: inline-block; 
@@ -129,17 +150,10 @@ export default function QRGeneratorClean() {
         </head>
         <body>
           <div class="print-container">
-            <div class="game-title">🎯 GameQrcodeFach</div>
             <div class="qr-container">
               ${qrSvgHtml}
             </div>
-            <div class="qr-type">${qrType.name}</div>
-            <div class="qr-points">Vale ${qrType.points} ponto${qrType.points > 1 ? 's' : ''}</div>
-            <div class="instructions">
-              📱 Escaneie este QR Code com o app GameQrcodeFach<br>
-              🏆 Ganhe pontos para sua equipe<br>
-              ⚡ Cada QR pode ser escaneado apenas uma vez!
-            </div>
+            <div class="qr-points">Parabéns, você encontrou um tesouro!</div>
           </div>
           <script>setTimeout(() => window.print(), 500);</script>
         </body>
@@ -209,7 +223,7 @@ export default function QRGeneratorClean() {
         </div>
 
         {/* QR Code Preview & Actions */}
-        <div className="qr-preview">
+  <div className="qr-preview game-border">
           <div className="preview-header">
             <Eye size={20} />
             <h3>Preview</h3>
